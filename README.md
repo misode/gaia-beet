@@ -1,28 +1,28 @@
-# FIXME
+# gaia-beet
 
-[![GitHub Actions](https://github.com/FIXME/FIXME/workflows/CI/badge.svg)](https://github.com/FIXME/FIXME/actions)
-[![PyPI](https://img.shields.io/pypi/v/FIXME.svg)](https://pypi.org/project/FIXME/)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/FIXME.svg)](https://pypi.org/project/FIXME/)
+[![GitHub Actions](https://github.com/misode/gaia/workflows/CI/badge.svg)](https://github.com/misode/gaia-beet/actions)
+[![PyPI](https://img.shields.io/pypi/v/gaia-beet.svg)](https://pypi.org/project/gaia-beet/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/gaia-beet.svg)](https://pypi.org/project/gaia-beet/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![Discord](https://img.shields.io/discord/900530660677156924?color=7289DA&label=discord&logo=discord&logoColor=fff)](https://discord.gg/98MdSGMm8j)
 
-> FIXME
+> Beet plugin to generate Minecraft worldgen files
 
 ## Introduction
 
-FIXME
+🚧 WIP 🚧
 
 ## Installation
 
 The package can be installed with `pip`.
 
 ```bash
-$ pip install FIXME
+$ pip install gaia-beet
 ```
 
 ## Getting started
 
-FIXME
+🚧 WIP 🚧
 
 ## Contributing
 
@@ -48,11 +48,11 @@ $ npm run check
 The code follows the [`black`](https://github.com/psf/black) code style. Import statements are sorted with [`isort`](https://pycqa.github.io/isort/).
 
 ```bash
-$ poetry run isort FIXME examples tests
-$ poetry run black FIXME examples tests
-$ poetry run black --check FIXME examples tests
+$ poetry run isort gaia-beet examples tests
+$ poetry run black gaia-beet examples tests
+$ poetry run black --check gaia-beet examples tests
 ```
 
 ---
 
-License - [MIT](https://github.com/FIXME/FIXME/blob/main/LICENSE)
+License - [MIT](https://github.com/misode/gaia-beet/blob/main/LICENSE)

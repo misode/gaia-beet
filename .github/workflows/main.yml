@@ -39,10 +39,10 @@ jobs:
       - name: Run type-checking
         run: npm run check
       - name: Check formatting
-        run: poetry run black --check FIXME examples tests
+        run: poetry run black --check gaia-beet examples tests
       - name: Release
         if: |
-          github.repository == 'FIXME/FIXME'
+          github.repository == 'misode/gaia-beet'
           && github.event_name == 'push'
           && github.ref == 'refs/heads/main'
         env:

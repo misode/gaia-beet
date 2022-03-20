@@ -5,4 +5,4 @@
 import setuptools
 
 if __name__ == "__main__":
-    setuptools.setup(name="FIXME")
+    setuptools.setup(name="gaia-beet")

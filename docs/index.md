@@ -1,4 +1,4 @@
-# FIXME
+# gaia-beet
 
 ```{toctree}
 :hidden:
@@ -10,8 +10,8 @@ changelog
 :caption: Project links
 :hidden:
 
-GitHub repository <https://github.com/FIXME/FIXME>
-PyPI package <https://pypi.org/project/FIXME>
+GitHub repository <https://github.com/misode/gaia-beet>
+PyPI package <https://pypi.org/project/gaia-beet>
 ```
 
 ```{eval-rst}
