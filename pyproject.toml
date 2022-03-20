@@ -1,0 +1,65 @@
+[tool.poetry]
+name = "FIXME"
+version = "0.0.0"
+description = "FIXME"
+authors = ["FIXME"]
+license = "MIT"
+
+homepage = "https://github.com/FIXME/FIXME"
+repository = "https://github.com/FIXME/FIXME"
+documentation = "https://FIXME.github.io/FIXME/"
+
+readme = "README.md"
+
+keywords = [
+  "beet",
+  "minecraft",
+  "FIXME",
+  "FIXME",
+  "FIXME"
+]
+
+include = ["FIXME/py.typed"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+beet = ">=0.45.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+black = "^21.11b1"
+isort = "^5.10.1"
+python-semantic-release = "^7.22.0"
+mudkip = "^0.4.14"
+pytest-insta = "^0.1.10"
+lectern = ">=0.18.1"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "tests FIXME --doctest-modules"
+doctest_optionflags = "NORMALIZE_WHITESPACE IGNORE_EXCEPTION_DETAIL ELLIPSIS"
+
+[tool.black]
+target-version = ["py38"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+
+[tool.semantic_release]
+branch = "main"
+version_variable = ["FIXME/__init__.py:__version__"]
+version_toml = "pyproject.toml:tool.poetry.version"
+major_on_zero = false
+build_command = "poetry build && poetry run mudkip build --update-gh-pages --repository https://x-access-token:${GH_TOKEN}@github.com/FIXME/FIXME"
+
+[tool.mudkip]
+preset = "furo"
+
+[tool.mudkip.override]
+html_title = "FIXME"
+suppress_warnings = ["myst.header"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
