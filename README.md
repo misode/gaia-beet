@@ -27,7 +27,8 @@ $ pip install gaia-beet
 ## Getting started
 
 When using with [`beet`](https://github.com/mcbeet/beet), a simple `beet.yml` is enough:
-```yml
+```yaml
+output: out
 pipeline:
   - main
 ```
@@ -46,6 +47,12 @@ def beet_default(ctx: Context):
     foo = gaia.df("basic:foo", abs(const(4) ** 3) + blah)
 
     gaia.df("basic:bar", blah * foo)
+```
+
+Then install beet and run the watch command:
+```bash
+$ pip install beet
+$ beet watch
 ```
 
 ## Contributing
