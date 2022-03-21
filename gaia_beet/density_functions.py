@@ -6,10 +6,14 @@ __all__ = [
     "SplinePoint",
     "const",
     "ref",
+    "add",
+    "mul",
     "min",
     "max",
     "half_negative",
     "quarter_negative",
+    "square",
+    "cube",
     "squeeze",
     "blend_alpha",
     "blend_offset",
@@ -34,6 +38,9 @@ __all__ = [
     "clamp",
     "spline",
     "terrain_shaper_spline",
+    "lerp",
+    "map_from_unit",
+    "mapped_noise",
 ]
 
 from dataclasses import dataclass
@@ -63,6 +70,12 @@ class DensityFunction:
     def __abs__(self):
         return OneArgument("abs", self)
 
+    def clamp(self, min: float, max: float):
+        return ClampDF(self, min, max)
+
+    def abs(self):
+        return OneArgument("abs", self)
+
     @staticmethod
     def generate_id(ctx: Context, id: str):
         if ":" in id:
@@ -86,7 +99,24 @@ def ref(id: str):
     return ReferenceDF(id)
 
 
+def add(*arguments: DensityFunction) -> DensityFunction:
+    assert len(arguments) > 0
+    result = arguments[-1]
+    for a in arguments[-2::-1]:
+        result = TwoArgumentsDF("add", a, result)
+    return result
+
+
+def mul(*arguments: DensityFunction) -> DensityFunction:
+    assert len(arguments) > 0
+    result = arguments[-1]
+    for a in arguments[-2::-1]:
+        result = TwoArgumentsDF("mul", a, result)
+    return result
+
+
 def min(*arguments: DensityFunction) -> DensityFunction:
+    assert len(arguments) > 0
     result = arguments[-1]
     for a in arguments[-2::-1]:
         result = TwoArgumentsDF("min", a, result)
@@ -94,6 +124,7 @@ def min(*arguments: DensityFunction) -> DensityFunction:
 
 
 def max(*arguments: DensityFunction) -> DensityFunction:
+    assert len(arguments) > 0
     result = arguments[-1]
     for a in arguments[-2::-1]:
         result = TwoArgumentsDF("max", a, result)
@@ -106,6 +137,14 @@ def half_negative(argument: DensityFunction):
 
 def quarter_negative(argument: DensityFunction):
     return OneArgument("quarter_negative", argument)
+
+
+def square(argument: DensityFunction):
+    return OneArgument("square", argument)
+
+
+def cube(argument: DensityFunction):
+    return OneArgument("cube", argument)
 
 
 def squeeze(argument: DensityFunction):
@@ -490,5 +529,17 @@ class TerrainShaperSplineDF(DensityFunction):
 
 
 def lerp(a: DensityFunction, b: DensityFunction, c: DensityFunction) -> DensityFunction:
-    neg_a = cache_once(a) * const(-1) + const(1)
+    neg_a = const(1) + const(-1) * cache_once(a)
     return (b * neg_a) + (c * cache_once(a))
+
+
+def map_from_unit(input: DensityFunction, min: float, max: float) -> DensityFunction:
+    avg = const((min + max) * 0.5)
+    half_diff = const((max - min) * 0.5)
+    return avg + half_diff * input
+
+
+def mapped_noise(
+    noise: str, min: float, max: float, xz_scale: float = 1, y_scale: float = 1
+) -> DensityFunction:
+    return map_from_unit(NoiseDF(noise, xz_scale, y_scale), min, max)
