@@ -10,9 +10,9 @@
   "python.linting.pycodestyleEnabled": false,
   "python.linting.pydocstyleEnabled": false,
   "python.linting.pylamaEnabled": false,
-  "python.analysis.extraPaths": ["./gaia_beet"],
   "[python]": {
     "editor.tabSize": 4,
+    "editor.insertSpaces": false,
     "editor.formatOnSave": true,
     "editor.formatOnType": false,
     "editor.formatOnPaste": false,
