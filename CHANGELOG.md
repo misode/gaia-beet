@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v0.4.0 (2022-03-21)
+### Feature
+* Add some more utility functions ([`ea320bb`](https://github.com/misode/gaia-beet/commit/ea320bb75e0306f8d6b6a7cf002023f25237108d))
+
+### Fix
+* Handle differences between 1.18 and 1.19 ([`a45e34b`](https://github.com/misode/gaia-beet/commit/a45e34b193e3d59edd221f5d7a7919d4f64edd93))
+* Y_clamped_gradient and shift noise ([`5234f25`](https://github.com/misode/gaia-beet/commit/5234f25f9f59822eba910d87c27582d541019090))
+
 ## v0.3.0 (2022-03-21)
 ### Feature
 * Add remaining density functions ([`62c63db`](https://github.com/misode/gaia-beet/commit/62c63db3fea690fd6ae67b1f624f1be5b746eef6))
