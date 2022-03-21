@@ -17,7 +17,7 @@ keywords = [
   "worldgen"
 ]
 
-include = ["gaia-beet/py.typed"]
+include = ["gaiabeet/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -25,16 +25,16 @@ beet = ">=0.45.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
-black = "^21.11b1"
+black = "^22.1.0"
 isort = "^5.10.1"
-python-semantic-release = "^7.22.0"
+python-semantic-release = "^7.27.0"
 mudkip = "^0.4.14"
-pytest-insta = "^0.1.10"
+pytest-insta = "^0.1.11"
 lectern = ">=0.18.1"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "tests gaia-beet --doctest-modules"
+addopts = "tests gaia_beet --doctest-modules"
 doctest_optionflags = "NORMALIZE_WHITESPACE IGNORE_EXCEPTION_DETAIL ELLIPSIS"
 
 [tool.black]
@@ -46,7 +46,7 @@ profile = "black"
 
 [tool.semantic_release]
 branch = "main"
-version_variable = ["gaia-beet/__init__.py:__version__"]
+version_variable = ["gaia_beet/__init__.py:__version__"]
 version_toml = "pyproject.toml:tool.poetry.version"
 major_on_zero = false
 build_command = "poetry build && poetry run mudkip build --update-gh-pages --repository https://x-access-token:${GH_TOKEN}@github.com/misode/gaia-beet"

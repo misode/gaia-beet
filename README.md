@@ -48,9 +48,9 @@ $ npm run check
 The code follows the [`black`](https://github.com/psf/black) code style. Import statements are sorted with [`isort`](https://pycqa.github.io/isort/).
 
 ```bash
-$ poetry run isort gaia-beet examples tests
-$ poetry run black gaia-beet examples tests
-$ poetry run black --check gaia-beet examples tests
+$ poetry run isort gaia_beet examples tests
+$ poetry run black gaia_beet examples tests
+$ poetry run black --check gaia_beet examples tests
 ```
 
 ---
