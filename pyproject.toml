@@ -28,7 +28,7 @@ pytest = "^6.2.5"
 black = "^22.1.0"
 isort = "^5.10.1"
 python-semantic-release = "^7.27.0"
-mudkip = "^0.4.14"
+mudkip = "^0.5.1"
 pytest-insta = "^0.1.11"
 lectern = ">=0.18.1"
 
