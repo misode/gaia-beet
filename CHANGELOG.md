@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.1 (2022-03-21)
+### Fix
+* Remove default plugin ([`6bfd92a`](https://github.com/misode/gaia-beet/commit/6bfd92aefb232d1fe9c758efdad951dffaf0db8c))
+
 ## v0.2.0 (2022-03-21)
 ### Feature
 * Simple density functions ([`41282e6`](https://github.com/misode/gaia-beet/commit/41282e6c53d0a76d252bd9c19254a1b7a45a6624))
