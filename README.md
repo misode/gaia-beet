@@ -10,7 +10,11 @@
 
 ## Introduction
 
-🚧 WIP 🚧
+Writing density functions in JSON by hand can be tiring and confusing. This package allows you to write them as natural looking expressions.
+
+```py
+gaia.df("basic:foo", abs(DF.const(4) ** 3) + DF.ref("basic:bar"))
+```
 
 ## Installation
 
@@ -22,7 +26,26 @@ $ pip install gaia-beet
 
 ## Getting started
 
-🚧 WIP 🚧
+When using with [`beet`](https://github.com/mcbeet/beet), a simple `beet.yml` is enough:
+```yml
+pipeline:
+  - main
+```
+
+This references a `main.py` plugin file where the density functions will be defined:
+```py
+from beet import Context
+from gaia_beet import Gaia, DensityFunction as DF
+
+def beet_default(ctx: Context):
+    gaia = ctx.inject(Gaia)
+
+    blah = DF.slide(DF.const(2))
+
+    foo = gaia.df("basic:foo", abs(DF.const(4) ** 3) + blah)
+
+    gaia.df("basic:bar", blah * foo)
+```
 
 ## Contributing
 
