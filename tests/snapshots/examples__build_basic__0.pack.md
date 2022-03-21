@@ -56,7 +56,26 @@
   "argument2": {
     "type": "minecraft:min",
     "argument1": 2,
-    "argument2": 3
+    "argument2": "basic:bar"
+  }
+}
+```
+
+`@density_function basic:choice`
+
+```json
+{
+  "type": "minecraft:range_choice",
+  "input": {
+    "type": "minecraft:slide",
+    "argument": 2
+  },
+  "min_inclusive": 0,
+  "max_exclusive": 64,
+  "when_in_range": "basic:foo",
+  "when_out_of_range": {
+    "type": "minecraft:slide",
+    "argument": 2
   }
 }
 ```
