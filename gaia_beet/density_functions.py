@@ -215,7 +215,7 @@ def clamp(
     return ClampDF(input, min, max)
 
 
-def spline(spline: Spline, min: float, max: float):
+def spline(spline: Spline, min: float | None = None, max: float | None = None):
     return SplineDF(spline, min, max)
 
 
@@ -422,12 +422,12 @@ class SplinePoint:
     derivative: float = 0
 
     def generate(self, ctx: Context):
-        if type(self.value) == float:
+        if type(self.value) in (float, int):
             value = self.value
         elif isinstance(self.value, Spline):
             value = self.value.generate(ctx)
         else:
-            raise ValueError("Invalid cubic spline value")
+            raise ValueError(f"Invalid cubic spline point value {self.value}")
         return dict(
             location=self.location,
             value=value,
@@ -438,20 +438,29 @@ class SplinePoint:
 @dataclass
 class SplineDF(DensityFunction):
     spline: Spline
-    min: float
-    max: float
+    min: float | None
+    max: float | None
 
     def __post_init__(self):
-        assert -1000000 <= self.min <= 1000000
-        assert -1000000 <= self.max <= 1000000
+        assert self.min is None or -1000000 <= self.min <= 1000000
+        assert self.max is None or -1000000 <= self.max <= 1000000
 
     def generate(self, ctx: Context):
-        return dict(
-            type=f"minecraft:spline",
-            input=self.spline.generate(ctx),
-            min=self.min,
-            max=self.max,
-        )
+        if ctx.data.pack_format >= 10:
+            return dict(
+                type=f"minecraft:spline",
+                spline=self.spline.generate(ctx),
+            )
+        else:
+            assert (
+                self.min is not None and self.max is not None
+            ), f"spline min and max need to be defined for pack format {ctx.data.pack_format}"
+            return dict(
+                type=f"minecraft:spline",
+                spline=self.spline.generate(ctx),
+                min=self.min,
+                max=self.max,
+            )
 
 
 @dataclass
@@ -468,6 +477,7 @@ class TerrainShaperSplineDF(DensityFunction):
         assert -1000000 <= self.max <= 1000000
 
     def generate(self, ctx: Context):
+        assert ctx.data.pack_format < 10
         return dict(
             type=f"minecraft:terrain_shaper_spline",
             spline=self.spline,
