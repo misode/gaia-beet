@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gaia-beet"
-version = "0.0.0"
+version = "0.1.0"
 description = "Beet plugin to generate Minecraft worldgen files"
 authors = ["Misode"]
 license = "MIT"
