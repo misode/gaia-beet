@@ -29,6 +29,7 @@ __all__ = [
     "noise",
     "shifted_noise",
     "weird_scaled_sampler",
+    "y_clamped_gradient",
     "range_choice",
     "clamp",
     "spline",
@@ -61,6 +62,12 @@ class DensityFunction:
 
     def __abs__(self):
         return OneArgument("abs", self)
+
+    @staticmethod
+    def generate_id(ctx: Context, id: str):
+        if ":" in id:
+            return id
+        return f"{ctx.meta['gaia_default_namespace']}:{id}"
 
 
 @dataclass
@@ -149,16 +156,16 @@ def interpolated(argument: DensityFunction):
     return OneArgument("interpolated", argument)
 
 
-def shift(argument: DensityFunction):
-    return OneArgument("shift", argument)
+def shift(noise: str):
+    return ShiftNoiseDF("shift", noise)
 
 
-def shift_a(argument: DensityFunction):
-    return OneArgument("shift_a", argument)
+def shift_a(noise: str):
+    return ShiftNoiseDF("shift_a", noise)
 
 
-def shift_b(argument: DensityFunction):
-    return OneArgument("shift_b", argument)
+def shift_b(noise: str):
+    return ShiftNoiseDF("shift_b", noise)
 
 
 def slide(argument: DensityFunction):
@@ -184,6 +191,10 @@ def weird_scaled_sampler(
     input: DensityFunction, noise: str, rarity: Literal["type_1"] | Literal["type_2"]
 ):
     return WeirdScaledSamplerDF(input, noise, rarity)
+
+
+def y_clamped_gradient(from_y: int, to_y: int, from_value: float, to_value: float):
+    return YClampedGradientDF(from_y, to_y, from_value, to_value)
 
 
 def range_choice(
@@ -224,9 +235,7 @@ class ReferenceDF(DensityFunction):
     id: str
 
     def generate(self, ctx: Context):
-        if ":" in self.id:
-            return self.id
-        return f"{ctx.meta['gaia_default_namespace']}:{self.id}"
+        return self.generate_id(ctx, self.id)
 
 
 @dataclass
@@ -266,6 +275,18 @@ class TwoArgumentsDF(DensityFunction):
 
 
 @dataclass
+class ShiftNoiseDF(DensityFunction):
+    type: str
+    noise_parameters: str
+
+    def generate(self, ctx: Context):
+        return dict(
+            type=f"minecraft:{self.type}",
+            argument=self.generate_id(ctx, self.noise_parameters),
+        )
+
+
+@dataclass
 class NoiseDF(DensityFunction):
     noise_parameters: str
     xz_scale: float
@@ -274,7 +295,7 @@ class NoiseDF(DensityFunction):
     def generate(self, ctx: Context) -> Dict[str, Any]:
         return dict(
             type=f"minecraft:noise",
-            noise=self.noise_parameters,
+            noise=self.generate_id(ctx, self.noise_parameters),
             xz_scale=self.xz_scale,
             y_scale=self.y_scale,
         )
@@ -299,18 +320,19 @@ class ShiftedNoiseDF(NoiseDF):
 @dataclass
 class WeirdScaledSamplerDF(DensityFunction):
     input: DensityFunction
-    noise: str
+    noise_parameters: str
     type: Literal["type_1"] | Literal["type_2"]
 
     def generate(self, ctx: Context):
         return dict(
             type=f"minecraft:weird_scaled_sampler",
             input=self.input.generate(ctx),
-            noise=self.noise,
+            noise=self.generate_id(ctx, self.noise_parameters),
             rarity_value_mapper=self.type,
         )
 
 
+@dataclass
 class YClampedGradientDF(DensityFunction):
     from_y: int
     to_y: int
@@ -455,3 +477,8 @@ class TerrainShaperSplineDF(DensityFunction):
             erosion=self.erosion.generate(ctx),
             weirdness=self.weirdness.generate(ctx),
         )
+
+
+def lerp(a: DensityFunction, b: DensityFunction, c: DensityFunction) -> DensityFunction:
+    neg_a = cache_once(a) * const(-1) + const(1)
+    return (b * neg_a) + (c * cache_once(a))
