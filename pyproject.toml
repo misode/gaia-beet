@@ -17,7 +17,7 @@ keywords = [
   "worldgen"
 ]
 
-include = ["gaiabeet/py.typed"]
+include = ["gaia_beet/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
