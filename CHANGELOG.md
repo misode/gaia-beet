@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.0 (2022-03-22)
+### Feature
+* Allow using floats as density functions ([`ec8d283`](https://github.com/misode/gaia-beet/commit/ec8d2836682f0365bc4214b0c2a2019baac7bf06))
+
+### Documentation
+* Improve getting started instructions ([`4f913bf`](https://github.com/misode/gaia-beet/commit/4f913bfa66d6de65ff39c96d782eaa8c2b3ac35a))
+
 ## v0.4.0 (2022-03-21)
 ### Feature
 * Add some more utility functions ([`ea320bb`](https://github.com/misode/gaia-beet/commit/ea320bb75e0306f8d6b6a7cf002023f25237108d))
