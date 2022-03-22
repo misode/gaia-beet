@@ -63,18 +63,18 @@ class DensityFunction:
 
     def __pow__(self, exp: Literal[2] | Literal[3]):
         if exp == 2:
-            return OneArgument("square", self)
+            return OneArgumentDF("square", self)
         elif exp == 3:
-            return OneArgument("cube", self)
+            return OneArgumentDF("cube", self)
 
     def __abs__(self):
-        return OneArgument("abs", self)
+        return OneArgumentDF("abs", self)
 
     def clamp(self, min: float, max: float):
         return ClampDF(self, min, max)
 
     def abs(self):
-        return OneArgument("abs", self)
+        return OneArgumentDF("abs", self)
 
     @staticmethod
     def generate_id(ctx: Context, id: str):
@@ -132,23 +132,23 @@ def max(*arguments: DensityFunction) -> DensityFunction:
 
 
 def half_negative(argument: DensityFunction):
-    return OneArgument("half_negative", argument)
+    return OneArgumentDF("half_negative", argument)
 
 
 def quarter_negative(argument: DensityFunction):
-    return OneArgument("quarter_negative", argument)
+    return OneArgumentDF("quarter_negative", argument)
 
 
 def square(argument: DensityFunction):
-    return OneArgument("square", argument)
+    return OneArgumentDF("square", argument)
 
 
 def cube(argument: DensityFunction):
-    return OneArgument("cube", argument)
+    return OneArgumentDF("cube", argument)
 
 
 def squeeze(argument: DensityFunction):
-    return OneArgument("squeeze", argument)
+    return OneArgumentDF("squeeze", argument)
 
 
 def blend_alpha():
@@ -160,7 +160,7 @@ def blend_offset():
 
 
 def blend_density(argument: DensityFunction):
-    return OneArgument("blend_density", argument)
+    return OneArgumentDF("blend_density", argument)
 
 
 def beardifier():
@@ -176,23 +176,23 @@ def end_islands():
 
 
 def cache_2d(argument: DensityFunction):
-    return OneArgument("cache_2d", argument)
+    return OneArgumentDF("cache_2d", argument)
 
 
 def cache_all_in_cell(argument: DensityFunction):
-    return OneArgument("cache_all_in_cell", argument)
+    return OneArgumentDF("cache_all_in_cell", argument)
 
 
 def cache_once(argument: DensityFunction):
-    return OneArgument("cache_once", argument)
+    return OneArgumentDF("cache_once", argument)
 
 
 def flat_cache(argument: DensityFunction):
-    return OneArgument("flat_cache", argument)
+    return OneArgumentDF("flat_cache", argument)
 
 
 def interpolated(argument: DensityFunction):
-    return OneArgument("interpolated", argument)
+    return OneArgumentDF("interpolated", argument)
 
 
 def shift(noise: str):
@@ -208,7 +208,7 @@ def shift_b(noise: str):
 
 
 def slide(argument: DensityFunction):
-    return OneArgument("slide", argument)
+    return OneArgumentDF("slide", argument)
 
 
 def noise(noise: str, xz_scale: float = 1, y_scale: float = 1):
@@ -288,7 +288,7 @@ class NoArgumentsDF(DensityFunction):
 
 
 @dataclass
-class OneArgument(DensityFunction):
+class OneArgumentDF(DensityFunction):
     type: str
     argument: DensityFunction
 
