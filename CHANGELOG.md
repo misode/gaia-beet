@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v0.5.1 (2022-03-22)
+### Fix
+* Wrong path for py.typed ([`86251bc`](https://github.com/misode/gaia-beet/commit/86251bc63293fa3f960568430c24a507eda93c6a))
+
 ## v0.5.0 (2022-03-22)
 ### Feature
 * Allow using floats as density functions ([`ec8d283`](https://github.com/misode/gaia-beet/commit/ec8d2836682f0365bc4214b0c2a2019baac7bf06))
