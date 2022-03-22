@@ -2,7 +2,6 @@ from beet import Context
 
 from gaia_beet import Gaia
 from gaia_beet.density_functions import *
-from gaia_beet.density_functions import lerp, mapped_noise
 
 
 def beet_default(ctx: Context):
@@ -28,16 +27,16 @@ def beet_default(ctx: Context):
     OFFSET = gaia.df(
         "overworld/offset",
         spline_with_blending(
-            const(-0.50375) + spline(dummy_spline(CONTINENTS)), blend_offset()
+            -0.50375 + spline(dummy_spline(CONTINENTS)), blend_offset()
         ),
     )
     FACTOR = gaia.df(
         "overworld/factor",
-        spline_with_blending(spline(dummy_spline(CONTINENTS)), const(10)),
+        spline_with_blending(spline(dummy_spline(CONTINENTS)), 10),
     )
     JAGGEDNESS = gaia.df(
         "overworld/jaggedness",
-        spline_with_blending(spline(dummy_spline(CONTINENTS)), const(0)),
+        spline_with_blending(spline(dummy_spline(CONTINENTS)), 0),
     )
     DEPTH = gaia.df("overworld/depth", y_clamped_gradient(-64, 320, 1.5, -1.5) + OFFSET)
     SLOPED_CHEESE = gaia.df(
@@ -52,7 +51,7 @@ def beet_default(ctx: Context):
         "overworld/caves/spaghetti_roughness_function",
         cache_once(
             mapped_noise("spaghetti_roughness_modulator", 0, -0.1)
-            * (noise("spaghetti_roughness").abs() + const(-0.4))
+            * (noise("spaghetti_roughness").abs() - 0.4)
         ),
     )
     SPAGHETTI_2D_THICKNESS = gaia.df(
@@ -67,7 +66,7 @@ def beet_default(ctx: Context):
                 "spaghetti_2d",
                 "type_2",
             )
-            + const(0.083) * SPAGHETTI_2D_THICKNESS,
+            + 0.083 * SPAGHETTI_2D_THICKNESS,
             cube(
                 abs(
                     mapped_noise("spaghetti_2d_elevation", -8, 8, y_scale=0)
@@ -79,7 +78,7 @@ def beet_default(ctx: Context):
     )
     caverns = add(
         noise("cave_entrance", xz_scale=0.75, y_scale=0.5),
-        const(0.37),
+        0.37,
         y_clamped_gradient(-10, 30, 0.3, 0),
     )
     spaghetti_rarity = cache_once(noise("spaghetti_3d_rarity", xz_scale=2))
@@ -100,12 +99,12 @@ def beet_default(ctx: Context):
             y_limited_interpolated(Y, noise("noodle"), -60, 320, -1),
             min=-1000000,
             max=0,
-            in_range=const(64),
+            in_range=64,
             out_of_range=add(
                 y_limited_interpolated(
                     Y, mapped_noise("noodle_thickness", -0.05, -0.1), -60, 320, 0
                 ),
-                const(1.5)
+                1.5
                 * max(
                     y_limited_interpolated(
                         Y, noise("noodle_ridge_a", 8 / 3, 8 / 3), -60, 320, 0
@@ -121,7 +120,7 @@ def beet_default(ctx: Context):
         "overworld/caves/pillars",
         cache_once(
             (
-                noise("pillar", xz_scale=25, y_scale=0.3) * const(2)
+                noise("pillar", xz_scale=25, y_scale=0.3) * 2
                 + mapped_noise("pillar_rareness", 0, -2)
             )
             * cube(mapped_noise("pillar_thickness", 0, -2))
@@ -129,11 +128,11 @@ def beet_default(ctx: Context):
     )
 
 
-def peaks_and_valleys(input: DensityFunction):
-    return const(-3) * (const(-1 / 3) + abs(const(-2 / 3) + abs(input)))
+def peaks_and_valleys(input: DensityFunctionInput):
+    return -3 * (-1 / 3 + abs(-2 / 3 + abs(wrap(input))))
 
 
-def spline_with_blending(fn1: DensityFunction, fn2: DensityFunction):
+def spline_with_blending(fn1: DensityFunctionInput, fn2: DensityFunctionInput):
     return flat_cache(cache_2d(lerp(blend_alpha(), fn2, fn1)))
 
 
@@ -141,17 +140,15 @@ def dummy_spline(continents: DensityFunction) -> Spline:
     return Spline(continents, [SplinePoint(1, 1)])
 
 
-def noise_gradient_density(a: DensityFunction, b: DensityFunction):
-    return const(4) * quarter_negative(b * a)
+def noise_gradient_density(a: DensityFunctionInput, b: DensityFunctionInput):
+    return 4 * quarter_negative(wrap(b) * a)
 
 
 def y_limited_interpolated(
-    input: DensityFunction,
-    in_range: DensityFunction,
+    input: DensityFunctionInput,
+    in_range: DensityFunctionInput,
     min: float,
     max: float,
-    out_of_range: float,
+    out_of_range: DensityFunctionInput,
 ):
-    return interpolated(
-        range_choice(input, min, max + 1, in_range, const(out_of_range))
-    )
+    return interpolated(range_choice(input, min, max + 1, in_range, out_of_range))

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 __all__ = [
     "DensityFunction",
+    "DensityFunctionInput",
+    "wrap",
     "Spline",
     "SplinePoint",
     "const",
@@ -55,11 +57,22 @@ class DensityFunction:
     def generate(self, ctx: Context) -> GeneratedDensityFunction:
         raise NotImplementedError("Density function generate not implemented")
 
-    def __add__(self, other: DensityFunction):
-        return TwoArgumentsDF("add", self, other)
+    def __add__(self, other: DensityFunctionInput):
+        return TwoArgumentsDF("add", self, wrap(other))
 
-    def __mul__(self, other: DensityFunction):
-        return TwoArgumentsDF("mul", self, other)
+    def __radd__(self, other: DensityFunctionInput):
+        return TwoArgumentsDF("add", wrap(other), self)
+
+    def __sub__(self, other: DensityFunctionInput):
+        if isinstance(other, (int, float)):
+            return TwoArgumentsDF("add", self, wrap(-other))
+        return TwoArgumentsDF("add", self, wrap(other) * const(-1))
+
+    def __mul__(self, other: DensityFunctionInput):
+        return TwoArgumentsDF("mul", self, wrap(other))
+
+    def __rmul__(self, other: DensityFunctionInput):
+        return TwoArgumentsDF("mul", wrap(other), self)
 
     def __pow__(self, exp: Literal[2] | Literal[3]):
         if exp == 2:
@@ -76,11 +89,23 @@ class DensityFunction:
     def abs(self):
         return OneArgumentDF("abs", self)
 
-    @staticmethod
-    def generate_id(ctx: Context, id: str):
-        if ":" in id:
-            return id
-        return f"{ctx.meta['gaia_default_namespace']}:{id}"
+
+DensityFunctionInput = float | str | DensityFunction
+
+
+def wrap(input: DensityFunctionInput) -> DensityFunction:
+    if isinstance(input, DensityFunction):
+        return input
+    elif isinstance(input, (int, float)):
+        return ConstantDF(input)
+    assert isinstance(input, str)
+    return ReferenceDF(input)
+
+
+def generate_id(ctx: Context, id: str):
+    if ":" in id:
+        return id
+    return f"{ctx.meta['gaia_default_namespace']}:{id}"
 
 
 @dataclass
@@ -99,56 +124,56 @@ def ref(id: str):
     return ReferenceDF(id)
 
 
-def add(*arguments: DensityFunction) -> DensityFunction:
+def add(*arguments: DensityFunctionInput) -> DensityFunction:
     assert len(arguments) > 0
-    result = arguments[-1]
+    result = wrap(arguments[-1])
     for a in arguments[-2::-1]:
-        result = TwoArgumentsDF("add", a, result)
+        result = TwoArgumentsDF("add", wrap(a), result)
     return result
 
 
-def mul(*arguments: DensityFunction) -> DensityFunction:
+def mul(*arguments: DensityFunctionInput) -> DensityFunction:
     assert len(arguments) > 0
-    result = arguments[-1]
+    result = wrap(arguments[-1])
     for a in arguments[-2::-1]:
-        result = TwoArgumentsDF("mul", a, result)
+        result = TwoArgumentsDF("mul", wrap(a), result)
     return result
 
 
-def min(*arguments: DensityFunction) -> DensityFunction:
+def min(*arguments: DensityFunctionInput) -> DensityFunction:
     assert len(arguments) > 0
-    result = arguments[-1]
+    result = wrap(arguments[-1])
     for a in arguments[-2::-1]:
-        result = TwoArgumentsDF("min", a, result)
+        result = TwoArgumentsDF("min", wrap(a), result)
     return result
 
 
-def max(*arguments: DensityFunction) -> DensityFunction:
+def max(*arguments: DensityFunctionInput) -> DensityFunction:
     assert len(arguments) > 0
-    result = arguments[-1]
+    result = wrap(arguments[-1])
     for a in arguments[-2::-1]:
-        result = TwoArgumentsDF("max", a, result)
+        result = TwoArgumentsDF("max", wrap(a), result)
     return result
 
 
-def half_negative(argument: DensityFunction):
-    return OneArgumentDF("half_negative", argument)
+def half_negative(argument: DensityFunctionInput):
+    return OneArgumentDF("half_negative", wrap(argument))
 
 
-def quarter_negative(argument: DensityFunction):
-    return OneArgumentDF("quarter_negative", argument)
+def quarter_negative(argument: DensityFunctionInput):
+    return OneArgumentDF("quarter_negative", wrap(argument))
 
 
-def square(argument: DensityFunction):
-    return OneArgumentDF("square", argument)
+def square(argument: DensityFunctionInput):
+    return OneArgumentDF("square", wrap(argument))
 
 
-def cube(argument: DensityFunction):
-    return OneArgumentDF("cube", argument)
+def cube(argument: DensityFunctionInput):
+    return OneArgumentDF("cube", wrap(argument))
 
 
-def squeeze(argument: DensityFunction):
-    return OneArgumentDF("squeeze", argument)
+def squeeze(argument: DensityFunctionInput):
+    return OneArgumentDF("squeeze", wrap(argument))
 
 
 def blend_alpha():
@@ -159,8 +184,8 @@ def blend_offset():
     return NoArgumentsDF("blend_offset")
 
 
-def blend_density(argument: DensityFunction):
-    return OneArgumentDF("blend_density", argument)
+def blend_density(argument: DensityFunctionInput):
+    return OneArgumentDF("blend_density", wrap(argument))
 
 
 def beardifier():
@@ -175,24 +200,24 @@ def end_islands():
     return NoArgumentsDF("end_islands")
 
 
-def cache_2d(argument: DensityFunction):
-    return OneArgumentDF("cache_2d", argument)
+def cache_2d(argument: DensityFunctionInput):
+    return OneArgumentDF("cache_2d", wrap(argument))
 
 
-def cache_all_in_cell(argument: DensityFunction):
-    return OneArgumentDF("cache_all_in_cell", argument)
+def cache_all_in_cell(argument: DensityFunctionInput):
+    return OneArgumentDF("cache_all_in_cell", wrap(argument))
 
 
-def cache_once(argument: DensityFunction):
-    return OneArgumentDF("cache_once", argument)
+def cache_once(argument: DensityFunctionInput):
+    return OneArgumentDF("cache_once", wrap(argument))
 
 
-def flat_cache(argument: DensityFunction):
-    return OneArgumentDF("flat_cache", argument)
+def flat_cache(argument: DensityFunctionInput):
+    return OneArgumentDF("flat_cache", wrap(argument))
 
 
-def interpolated(argument: DensityFunction):
-    return OneArgumentDF("interpolated", argument)
+def interpolated(argument: DensityFunctionInput):
+    return OneArgumentDF("interpolated", wrap(argument))
 
 
 def shift(noise: str):
@@ -207,8 +232,8 @@ def shift_b(noise: str):
     return ShiftNoiseDF("shift_b", noise)
 
 
-def slide(argument: DensityFunction):
-    return OneArgumentDF("slide", argument)
+def slide(argument: DensityFunctionInput):
+    return OneArgumentDF("slide", wrap(argument))
 
 
 def noise(noise: str, xz_scale: float = 1, y_scale: float = 1):
@@ -219,17 +244,21 @@ def shifted_noise(
     noise: str,
     xz_scale: float = 1,
     y_scale: float = 1,
-    shift_x: DensityFunction = const(0),
-    shift_y: DensityFunction = const(0),
-    shift_z: DensityFunction = const(0),
+    shift_x: DensityFunctionInput = 0,
+    shift_y: DensityFunctionInput = 0,
+    shift_z: DensityFunctionInput = 0,
 ):
-    return ShiftedNoiseDF(noise, xz_scale, y_scale, shift_x, shift_y, shift_z)
+    return ShiftedNoiseDF(
+        noise, xz_scale, y_scale, wrap(shift_x), wrap(shift_y), wrap(shift_z)
+    )
 
 
 def weird_scaled_sampler(
-    input: DensityFunction, noise: str, rarity: Literal["type_1"] | Literal["type_2"]
+    input: DensityFunctionInput,
+    noise: str,
+    rarity: Literal["type_1"] | Literal["type_2"],
 ):
-    return WeirdScaledSamplerDF(input, noise, rarity)
+    return WeirdScaledSamplerDF(wrap(input), noise, rarity)
 
 
 def y_clamped_gradient(from_y: int, to_y: int, from_value: float, to_value: float):
@@ -237,21 +266,27 @@ def y_clamped_gradient(from_y: int, to_y: int, from_value: float, to_value: floa
 
 
 def range_choice(
-    input: DensityFunction,
+    input: DensityFunctionInput,
     min: float,
     max: float,
-    in_range: DensityFunction | None = None,
-    out_of_range: DensityFunction | None = None,
+    in_range: DensityFunctionInput | None = None,
+    out_of_range: DensityFunctionInput | None = None,
 ):
-    return RangeChoiceDF(input, min, max, in_range or input, out_of_range or input)
+    return RangeChoiceDF(
+        wrap(input),
+        min,
+        max,
+        wrap(input if in_range is None else in_range),
+        wrap(input if out_of_range is None else out_of_range),
+    )
 
 
 def clamp(
-    input: DensityFunction,
+    input: DensityFunctionInput,
     min: float,
     max: float,
 ):
-    return ClampDF(input, min, max)
+    return ClampDF(wrap(input), min, max)
 
 
 def spline(spline: Spline, min: float | None = None, max: float | None = None):
@@ -262,11 +297,13 @@ def terrain_shaper_spline(
     spline: Literal["offset"] | Literal["factor"] | Literal["jaggedness"],
     min: float,
     max: float,
-    continentalness: DensityFunction,
-    erosion: DensityFunction,
-    weirdness: DensityFunction,
+    continentalness: DensityFunctionInput,
+    erosion: DensityFunctionInput,
+    weirdness: DensityFunctionInput,
 ):
-    return TerrainShaperSplineDF(spline, min, max, continentalness, erosion, weirdness)
+    return TerrainShaperSplineDF(
+        spline, min, max, wrap(continentalness), wrap(erosion), wrap(weirdness)
+    )
 
 
 @dataclass
@@ -274,7 +311,7 @@ class ReferenceDF(DensityFunction):
     id: str
 
     def generate(self, ctx: Context):
-        return self.generate_id(ctx, self.id)
+        return generate_id(ctx, self.id)
 
 
 @dataclass
@@ -321,7 +358,7 @@ class ShiftNoiseDF(DensityFunction):
     def generate(self, ctx: Context):
         return dict(
             type=f"minecraft:{self.type}",
-            argument=self.generate_id(ctx, self.noise_parameters),
+            argument=generate_id(ctx, self.noise_parameters),
         )
 
 
@@ -334,7 +371,7 @@ class NoiseDF(DensityFunction):
     def generate(self, ctx: Context) -> Dict[str, Any]:
         return dict(
             type=f"minecraft:noise",
-            noise=self.generate_id(ctx, self.noise_parameters),
+            noise=generate_id(ctx, self.noise_parameters),
             xz_scale=self.xz_scale,
             y_scale=self.y_scale,
         )
@@ -366,7 +403,7 @@ class WeirdScaledSamplerDF(DensityFunction):
         return dict(
             type=f"minecraft:weird_scaled_sampler",
             input=self.input.generate(ctx),
-            noise=self.generate_id(ctx, self.noise_parameters),
+            noise=generate_id(ctx, self.noise_parameters),
             rarity_value_mapper=self.type,
         )
 
@@ -528,12 +565,16 @@ class TerrainShaperSplineDF(DensityFunction):
         )
 
 
-def lerp(a: DensityFunction, b: DensityFunction, c: DensityFunction) -> DensityFunction:
+def lerp(
+    a: DensityFunctionInput, b: DensityFunctionInput, c: DensityFunctionInput
+) -> DensityFunction:
     neg_a = const(1) + const(-1) * cache_once(a)
-    return (b * neg_a) + (c * cache_once(a))
+    return (wrap(b) * neg_a) + (wrap(c) * cache_once(a))
 
 
-def map_from_unit(input: DensityFunction, min: float, max: float) -> DensityFunction:
+def map_from_unit(
+    input: DensityFunctionInput, min: float, max: float
+) -> DensityFunction:
     avg = const((min + max) * 0.5)
     half_diff = const((max - min) * 0.5)
     return avg + half_diff * input
