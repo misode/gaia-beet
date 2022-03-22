@@ -5,7 +5,7 @@ description = "Beet plugin to generate Minecraft worldgen files"
 authors = ["Misode"]
 license = "MIT"
 
-homepage = "https://github.com/misode/gaia-beet"
+homepage = "https://misode.github.io/gaia-beet/"
 repository = "https://github.com/misode/gaia-beet"
 
 readme = "README.md"
