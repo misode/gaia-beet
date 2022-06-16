@@ -63,10 +63,14 @@ class DensityFunction:
     def __radd__(self, other: DensityFunctionInput):
         return TwoArgumentsDF("add", wrap(other), self)
 
+    def __neg__(self):
+        return self * const(-1)
+
     def __sub__(self, other: DensityFunctionInput):
-        if isinstance(other, (int, float)):
-            return TwoArgumentsDF("add", self, wrap(-other))
-        return TwoArgumentsDF("add", self, wrap(other) * const(-1))
+        return TwoArgumentsDF("add", self, wrap(-other))
+
+    def __rsub__(self, other: DensityFunctionInput):
+        return TwoArgumentsDF("add", wrap(other), -self)
 
     def __mul__(self, other: DensityFunctionInput):
         return TwoArgumentsDF("mul", self, wrap(other))

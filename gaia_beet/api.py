@@ -3,7 +3,8 @@ __all__ = ["Gaia"]
 from dataclasses import dataclass
 from typing import Any, List
 
-from beet import Context, DensityFunction, Noise
+from beet import Context
+from beet.contrib.worldgen import WorldgenDensityFunction, WorldgenNoise
 
 from .density_functions import DensityFunction as DF
 from .density_functions import ref
@@ -20,7 +21,7 @@ class Gaia:
         return f"{self.default_namespace}:{id}"
 
     def noise(self, id: str, first_octave: float, amplitudes: List[float]):
-        self.ctx.data[self.__id(id)] = Noise(
+        self.ctx.data[self.__id(id)] = WorldgenNoise(
             dict(
                 firstOctave=first_octave,
                 amplitudes=amplitudes,
@@ -31,5 +32,5 @@ class Gaia:
     def df(self, id: str, function: DF):
         with self.ctx.override(gaia_default_namespace=self.default_namespace):
             content: Any = function.generate(self.ctx)
-            self.ctx.data[self.__id(id)] = DensityFunction(content)
+            self.ctx.data[self.__id(id)] = WorldgenDensityFunction(content)
             return ref(self.__id(id))
