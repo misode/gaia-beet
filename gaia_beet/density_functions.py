@@ -70,7 +70,7 @@ class DensityFunction:
         return TwoArgumentsDF("add", self, wrap(-other))
 
     def __rsub__(self, other: DensityFunctionInput):
-        return TwoArgumentsDF("add", wrap(-other), self)
+        return TwoArgumentsDF("add", wrap(other), -self)
 
     def __mul__(self, other: DensityFunctionInput):
         return TwoArgumentsDF("mul", self, wrap(other))
